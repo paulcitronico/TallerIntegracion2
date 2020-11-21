@@ -28,11 +28,11 @@ opt = st.sidebar.radio("",
     ("Casos", "Defunciones Registro Civil", "Datos Deis", "Ocupación Hospitalaria","Positivad Diaria")
 )
 
-if opt == "Defunciones Registro Civil":
-    defunciones_registro.main()
-
 if opt == "Casos":
     casos_covid.main()
+    
+if opt == "Defunciones Registro Civil":
+    defunciones_registro.main()
 
 if opt == "Datos Deis":
     vista_deis.main()
