@@ -23,9 +23,9 @@ st.sidebar.title('Navegación')
 opt = st.sidebar.radio("",
     ("Casos por región",
     "Casos por comuna",
-    "Defunciones Deis",
+    "Deis-DATOS",
     "Ocupación Hospitalaria",
-    "Positivad ICOVID",
+    "ICOVID-DATOS",
     "Casos Activos",
     "Rango Etario",
     )
@@ -34,13 +34,13 @@ opt = st.sidebar.radio("",
 if opt == "Casos por región":
     casos_region.main()
 
-if opt == "Defunciones Deis":
+if opt == "Deis-DATOS":
     vista_deis.main()
 
 if opt == "Ocupación Hospitalaria":
     ocupacion_hospitalaria.main()
 
-if opt == "Positivad ICOVID":
+if opt == "ICOVID-DATOS":
     vista_icovid.main()
 
 if opt == "Casos por comuna":
