@@ -1,3 +1,4 @@
-# Evolución del Covid-19 en Chile
+# covid-19-chile
+Repositorio de la página https://share.streamlit.io/joaquin-silva/covid-19-chile/master/app.py
 
-Este repositorio está desplegado en [este sitio web](https://covid19-evolution-chile.herokuapp.com/)
+También disponible en https://visor-covid.herokuapp.com/

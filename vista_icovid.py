@@ -28,12 +28,16 @@ def my_plot(df, comunas, op):
             x=aux['fecha'],
             y=100*y,
             name=str(comuna),
-            mode='lines'
+            mode='lines',
+            marker_color=(px.colors.qualitative.D3+px.colors.qualitative.Safe)[i]
+            
         ))
     fig.update_layout(
         title_text="Positividad Exámenes PCR",
         xaxis_title="Fecha",
         yaxis_title="Porcentaje Positividad",
+        template='ggplot2',
+        height=550
     )
     return fig
 
@@ -50,23 +54,32 @@ def my_plot_reg(df, regiones, op):
             x=aux['fecha'],
             y=100*y,
             name=str(region),
-            mode='lines'
+            mode='lines',
+            marker_color=px.colors.qualitative.G10[i]
         ))
     fig.update_layout(
         title_text="Positividad Exámenes PCR",
         xaxis_title="Fecha",
         yaxis_title="Porcentaje Positividad",
+        template='ggplot2',
+        height=550
     )
     return fig
 
 def main():
     st.title('Positividad ICOVID Chile')
 
+    st.write('''
+        Datos provistos por el grupo [ICOVID Chile](https://www.icovidchile.cl/) y el 
+        Ministerio de Ciencia en su [producto 55](https://github.com/MinCiencia/Datos-COVID19/tree/master/output/producto55).
+    ''')
+
     st.header('Vista regional')
     
     df = get_data_reg()
-    l_reg = list(df['Region'].dropna().unique())
-    regiones = st.multiselect('Regiones', l_reg, l_reg, key=0)
+    l_reg = list(set(df['Region']))
+    l_reg = [x for x in l_reg if str(x)!='nan']   
+    regiones = st.multiselect('Regiones', l_reg, ['Antofagasta','Coquimbo','Metropolitana','Magallanes'], key=0)
 
     op = st.checkbox("Suavizar datos (Promedio móvil 7 días)", value=True, key=0)
     fig = my_plot_reg(df, regiones, op)
@@ -75,15 +88,28 @@ def main():
     st.header('Vista comunal')
 
     df = get_data_comuna()
-    regiones = list(df['Region'].dropna().unique())
+    regiones = list(set(df['Region']))
     reg = st.selectbox('Region', regiones, index=regiones.index('Metropolitana'))
     df_reg = df[df['Region']==reg].reset_index(drop=True)
 
-    l_comunas = list(df_reg['Comuna'].dropna().unique())
-    comunas = st.multiselect('Comunas', l_comunas, l_comunas, key=1)
+    l_comunas = list(set(df_reg['Comuna']))
+
+    cant = len(l_comunas)
+    if cant > 10:
+        cant = 10
+
+    comunas = st.multiselect('Comunas', l_comunas, l_comunas[:cant], key=1)
 
     op = st.checkbox("Suavizar datos (Promedio móvil 7 días)", value=True, key=1)
-    fig = my_plot(df, comunas, op)
-    st.plotly_chart(fig, use_container_width=True) 
+    try:
+        fig = my_plot(df, comunas, op)
+        st.plotly_chart(fig, use_container_width=True) 
+    except:
+        st.write('Demasiadas comunas seleccionadas')
 
+    st.markdown("---")
+    st.markdown("Autor: [Joaquín Silva](https://github.com/joaquin-silva)")
     st.markdown("Datos: [Ministerio de Ciencia](https://github.com/MinCiencia/Datos-COVID19)")
+
+if __name__ == "__main__":
+    main()
