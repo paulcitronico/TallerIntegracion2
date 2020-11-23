@@ -172,15 +172,5 @@ def main():
 		chart = my_streamgraph_plot(df, "porcentaje casos confirmados", title)
 		st.altair_chart(chart)
 
-	st.markdown("Autor: [Alonso Silva](https://github.com/alonsosilvaallende)")
-	st.markdown("Datos: [Ministerio de Ciencia](https://github.com/MinCiencia/Datos-COVID19)")
-
-	st.markdown(" - El 17 de junio, se añadieron 31.422 casos confirmados debido a revisiones en el sistema de epivigilia y las fuentes de datos ([ver noticia](https://www.biobiochile.cl/noticias/nacional/chile/2020/06/16/minsal-anade-otros-31-412-contagios-covid-19-no-estaban-informados-total-supera-los-215-mil.shtml)).")
-
-	if plot == "Total de casos confirmados acumulados" or plot == "Nuevos casos confirmados":
-		st.markdown("*Advertencia*: El número de casos confirmados no representa exactamente el número de casos/contagios reales. Estos últimos valores no son conocidos por límites de testeo.")
-	else:
-		st.markdown("*Advertencia*: El número de casos confirmados no representa exactamente el número de casos/contagios reales. Estos últimos valores no son conocidos por límites de testeo. Además, los casos confirmados por 100.000 habitantes, dan mayores valores a regiones con pocos habitantes, por lo que pueden introducir sesgos en los datos.")
-
 if __name__ == "__main__":
     main()

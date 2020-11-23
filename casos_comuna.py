@@ -93,11 +93,5 @@ def main():
         fig = my_heatmap(df, select, op, op_data)
         st.plotly_chart(fig, use_container_width=True)
 
-    st.markdown("**Nota:** Los datos de las últimas semanas se pueden ir ajustando con el paso del tiempo.")
-
-    st.markdown("---")
-    st.markdown("Autor: [Joaquín Silva](https://github.com/joaquin-silva)")
-    st.markdown("Datos: [Ministerio de Ciencia](https://github.com/MinCiencia/Datos-COVID19)")
-
 if __name__ == "__main__":
     main()

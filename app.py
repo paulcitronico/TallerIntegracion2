@@ -5,7 +5,6 @@ import casos_region
 import vista_deis
 import ocupacion_hospitalaria
 import vista_icovid
-import reporte_diario
 import casos_comuna
 import casos_activos
 import casos_grupo_etario
