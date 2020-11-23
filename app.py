@@ -6,7 +6,6 @@ import ocupacion_hospitalaria
 import vista_icovid
 import casos_comuna
 import casos_activos
-import casos_grupo_etario
 
 # cd Downloads\Python\Streamlit\Covid-19
 # streamlit run app.py   
@@ -27,7 +26,6 @@ opt = st.sidebar.radio("",
     "Ocupación Hospitalaria",
     "ICOVID-DATOS",
     "Casos Activos",
-    "Rango Etario",
     )
 )
 
@@ -48,6 +46,3 @@ if opt == "Casos por comuna":
 
 if opt == "Casos Activos":
     casos_activos.main()
-
-if opt == "Rango Etario":
-    casos_grupo_etario.main()
