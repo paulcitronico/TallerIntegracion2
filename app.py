@@ -2,7 +2,6 @@ import streamlit as st
 
 import casos_region
 import vista_deis
-import ocupacion_hospitalaria
 import vista_icovid
 import casos_comuna
 import casos_activos
@@ -25,7 +24,6 @@ opt = st.sidebar.radio("",
     "Casos por comuna",
     "Defunciones Registro Civil",
     "Deis-DATOS",
-    "Ocupación Hospitalaria",
     "ICOVID-DATOS",
     "Casos Activos",
     )
@@ -39,9 +37,6 @@ if opt == "Deis-DATOS":
 
 if opt == "Defunciones Registro Civil":
     defunciones_registro.main()
-
-if opt == "Ocupación Hospitalaria":
-    ocupacion_hospitalaria.main()
 
 if opt == "ICOVID-DATOS":
     vista_icovid.main()
