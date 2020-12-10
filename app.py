@@ -5,6 +5,7 @@ import vista_deis
 import vista_icovid
 import casos_comuna
 import casos_activos
+import casos_grupo_etario
 import defunciones_registro
 
 # cd Downloads\Python\Streamlit\Covid-19
@@ -22,6 +23,7 @@ st.sidebar.title('Navegación')
 opt = st.sidebar.radio("",
     ("Casos por región",
     "Casos por comuna",
+    "Casos por edad",
     "Defunciones Registro Civil",
     "Deis-DATOS",
     "ICOVID-DATOS",
@@ -43,6 +45,9 @@ if opt == "ICOVID-DATOS":
 
 if opt == "Casos por comuna":
     casos_comuna.main()
+
+if opt == "Casos por edad":
+    casos_grupo_etario.main()
 
 if opt == "Casos Activos":
     casos_activos.main()
