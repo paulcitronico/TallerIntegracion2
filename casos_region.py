@@ -43,9 +43,8 @@ def graficaRegional(df, value_name, title, option="Normal"):
         template='ggplot2',
         height=550
     )
-	
-
 	return fig
+	
 #metodo principal
 def main():
 	st.sidebar.markdown('---')
