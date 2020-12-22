@@ -108,6 +108,7 @@ def deaths_genre_plot(df):
     return fig
 
 @st.cache
+#Agrupar por causa
 def my_groupby(data):
     df = data.groupby(['fecha','región','causa'], as_index=False).count()
     df = df[df.columns[:4]]
@@ -116,6 +117,7 @@ def my_groupby(data):
     df['causa'] = [causa[:37] for causa in df['causa']]
     return df
 
+#Crear grafico de defunciones por causa basica
 def my_plot_2(df, op, colors):
     df = df.sort_values(by=['causa']).reset_index(drop=True)
     fig = go.Figure()
@@ -144,6 +146,7 @@ def my_plot_2(df, op, colors):
     return fig
 
 @st.cache
+#Agrupar por region y causa_detalle
 def my_groupby_2(data):
     df = data.groupby(['fecha','región','causa_detalle'], as_index=False).count()
     df = df[df.columns[:4]]
@@ -152,6 +155,7 @@ def my_groupby_2(data):
     return df
 
 @st.cache
+#Agrupar por causa_detalle
 def my_groupby_3(data):
     df = data.groupby(['fecha','causa_detalle'], as_index=False).count()
     df = df[df.columns[:3]]
@@ -159,6 +163,7 @@ def my_groupby_3(data):
     df = df.sort_values(by=['fecha']).reset_index(drop=True)
     return df
 
+#Crear grafico de defunciones confirmado y sospechoso
 def my_plot_3(df):
     colors = ['#d62728','#1f77b4']
     fig = go.Figure()
@@ -194,6 +199,7 @@ def my_plot_3(df):
     return fig
 
 @st.cache
+#Agrupar por comuna, mes y nombre_mes
 def my_groupby_4(df):
     data = df.groupby(['región','comuna','mes','nombre_mes'], as_index=False).count()
     data =data[data.columns[:5]]
@@ -201,6 +207,7 @@ def my_groupby_4(df):
     data = data.sort_values(by=['mes']).reset_index(drop=True)
     return data
 
+#Crear grafico de defunciones confirmado mas sospechoso
 def my_plot_4(df):
     fig = go.Figure(data=go.Heatmap(
         z=df['cantidad'],
@@ -219,6 +226,7 @@ def my_plot_4(df):
     )
     return fig
 
+#Crear grafico de defunciones por region por causa basica
 def my_plot_5(df, meses, region):
     df = df[df['mes'].isin(meses)]
     data = df.groupby('causa',as_index=False).count()
@@ -241,6 +249,7 @@ def my_plot_5(df, meses, region):
         )
     return fig
 
+#Crear grafico de porcentaje de defunciones por comuna
 def my_plot_6(df, meses, region, colors):
     df = df[df['mes'].isin(meses)]
     data = df.groupby(['comuna','causa'],as_index=False).count()
@@ -284,6 +293,7 @@ def my_plot_6(df, meses, region, colors):
     )
     return fig
 
+#Clase principal
 def main():
     df = get_data()
     df_covid = df[df["causa"]=='COVID-19'].reset_index(drop=True)
