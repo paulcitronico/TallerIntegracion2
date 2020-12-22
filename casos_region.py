@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 @st.cache
+#carga los datos y los segrega por region y fecha
 def get_data():
 	URL = "https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto3/CasosTotalesCumulativo_T.csv"
 	df = pd.read_csv(URL)
@@ -18,6 +19,7 @@ def get_data():
 	return df
 
 @st.cache
+#carga los datos y los segrega por region y poblacion
 def get_population():
     URL = "https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto7/PCR.csv"
     df = pd.read_csv(URL)
@@ -25,6 +27,7 @@ def get_population():
     df = df.set_index("Region")
     return df
 
+#retorna la grafica 
 def my_plotly_plot(df, value_name, title, option="Normal"):
 	df = df.reset_index()
 	df = pd.melt(df, id_vars=["fecha"], var_name="Región" , value_name=value_name)
@@ -43,41 +46,7 @@ def my_plotly_plot(df, value_name, title, option="Normal"):
 	
 
 	return fig
-	
-def my_percentage_plot(df, value_name, title):
-	df = df.reset_index()
-	df = pd.melt(df, id_vars=["fecha"], var_name="Región" , value_name=value_name)
-	chart = (
-	    alt.Chart(df).mark_area().encode(
-	        x="fecha:T",
-	        y=alt.Y(value_name, axis=alt.Axis(format='%'), stack="normalize"),
-			tooltip = [value_name],
-	        color="Región:N",
-	    ).properties(
-	    	title=title,
-			height=600,
-	    	width=600
-		)
-	)
-	return chart
-
-def my_streamgraph_plot(df, value_name, title):
-	df = df.reset_index()
-	df = pd.melt(df, id_vars=["fecha"], var_name="Región" , value_name=value_name)
-	chart = (
-	    alt.Chart(df).mark_area().encode(
-	        x="fecha:T",
-	        y=alt.Y(value_name, stack="center", axis=None),
-			tooltip = [value_name],
-	        color="Región:N",
-	    ).properties(
-	    	title=title,
-			height=600,
-	    	width=600
-		)
-	)
-	return chart
-
+#metodo principal
 def main():
 	st.sidebar.markdown('---')
 
@@ -101,7 +70,6 @@ def main():
 	)
 
 	if plot == "Nuevos casos confirmados":
-		# Agregar el 2 de marzo para hacer el diff
 		df = df.T
 		df[pd.to_datetime("2020-03-02")] = [0 for i in range(len(df.index))]
 		df = df.T
@@ -116,7 +84,6 @@ def main():
 		df = df.apply(lambda x: 100000*x[:-1]/x[-1], axis=1)
 		df = df.T
 	elif plot == "Nuevos casos confirmados por 100.000 habitantes":
-		# Agregar el 2 de marzo para hacer el diff
 		df = df.T
 		df[pd.to_datetime("2020-03-02")] = [0 for i in range(len(df.index))]
 		df = df.T
@@ -159,18 +126,8 @@ def main():
 	else:
 		title = "Nuevos casos confirmados por 100.000 habitantes*"
 
-
-	option = st.sidebar.radio("Tipo de gráfico", ("Normal", "Porcentaje", "Vapor"))
-
-	if option == "Normal":
-		fig = my_plotly_plot(df, "casos confirmados", title)
-		st.plotly_chart(fig, use_container_width=True) 
-	elif option == "Porcentaje":
-		chart = my_percentage_plot(df, "porcentaje casos confirmados", title)
-		st.altair_chart(chart)
-	elif option == "Vapor":
-		chart = my_streamgraph_plot(df, "porcentaje casos confirmados", title)
-		st.altair_chart(chart)
+	fig = my_plotly_plot(df, "casos confirmados", title)
+	st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":
     main()

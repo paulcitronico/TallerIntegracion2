@@ -1,3 +1,4 @@
+#librerias
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -6,11 +7,13 @@ import plotly.express as px
 import datetime
 
 @st.cache
-def get_data():
+# metodo carga la data
+def cargar_datos():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto19/CasosActivosPorComuna_std.csv')
     return df
 
-def my_groupby(df):
+# metodo que agrupa por
+def miGrupoPor(df):
     df = df[df['Fecha'] == max(df['Fecha'])]
     data = df.groupby(by=['Region','Comuna'], as_index=False).sum()
     data = data[data['Comuna'] != 'Total']
@@ -18,7 +21,8 @@ def my_groupby(df):
     data = data.sort_values('Casos activos', ascending=False).reset_index(drop=True)
     return data
 
-def plot_mas_activos(data):
+# plotea la grafica de los activos
+def grafica_activos(data):
     cant = 20
     fig = go.Figure()
     fig.add_trace(go.Bar(
@@ -36,7 +40,8 @@ def plot_mas_activos(data):
     )
     return fig
 
-def plot_activos_region(df):
+#plotea los activos por region
+def grafica_activosxRegion(df):
     df = df[df['Fecha'] == max(df['Fecha'])]
     data = df.groupby(by=['Region'], as_index=False).sum()
     data = data[['Region','Casos activos']]
@@ -59,8 +64,8 @@ def plot_activos_region(df):
     )
     return fig
 
-
-def plot_comunas(data):
+# plotea la grafica de los activos por comuna
+def grafica_activosxComuna(data):
     fig = go.Figure()
     fig.add_trace(go.Bar(
         y=data['Comuna'][::-1],
@@ -83,10 +88,11 @@ def plot_comunas(data):
     )
     return fig
 
-
+#principal
 def main():
+    # titulo streamlit y carga de datos
     st.title('Casos Activos')
-    df = get_data()
+    df = cargar_datos()
 
     d, m, y = max(df['Fecha']).split('-')[::-1]
     fecha = f'{d}-{m}-{y}'
@@ -96,19 +102,17 @@ def main():
     - Casos activos a la fecha {fecha}.
     ''')
 
-    #fechas = sorted(list(set(df['Fecha'])))
-    #f = st.select_slider('Cambiar fecha de informe', options=fechas)
 
     st.header('Comunas con más casos activos')
-    data = my_groupby(df)
+    data = miGrupoPor(df)
 
-    fig = plot_mas_activos(data)
+    fig = grafica_activos(data)
     st.plotly_chart(fig, use_container_width=True) 
 
     st.write('---')
     st.header('Casos activos por región')
 
-    fig = plot_activos_region(df)
+    fig = grafica_activosxRegion(df)
     st.plotly_chart(fig, use_container_width=True) 
 
     st.write('---')
@@ -118,9 +122,9 @@ def main():
     reg = st.selectbox('Región', regiones, index=regiones.index('Metropolitana'))
 
     data_reg = data[data['Region']==reg]
-    fig = plot_comunas(data_reg)
+    fig = grafica_activosxComuna(data_reg)
     st.plotly_chart(fig, use_container_width=True) 
 
-
+# llama a la funcion main si se ejecuta como programa principal
 if __name__ == "__main__":
     main()

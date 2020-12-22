@@ -1,5 +1,5 @@
+#librerias
 import streamlit as st
-
 import casos_region
 import vista_deis
 import vista_icovid
@@ -7,18 +7,16 @@ import casos_comuna
 import casos_activos
 import casos_grupo_etario
 import defunciones_registro
+   
 
-# cd Downloads\Python\Streamlit\Covid-19
-# streamlit run app.py   
-
-# Config
+# Configuracion
 st.beta_set_page_config(
     page_title="Covid-19 Chile",
  	layout="centered",
  	initial_sidebar_state="expanded",
 )
 
-# Sidebar   
+# barra lateral 
 st.sidebar.title('Navegación')
 opt = st.sidebar.radio("",
     ("Casos por región",
@@ -31,6 +29,7 @@ opt = st.sidebar.radio("",
     )
 )
 
+#opciones de la barra lateral
 if opt == "Casos por región":
     casos_region.main()
 

@@ -4,7 +4,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 import datetime
-
+# carga los datos
 def get_data():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto16/CasosGeneroEtario_std.csv')
     data = df.groupby(['Fecha','Grupo de edad'], as_index=False).sum()
@@ -18,7 +18,7 @@ def get_data():
             nuevos.append(data['Casos confirmados'][i] - data['Casos confirmados'][i-17])
     data['Casos nuevos'] = nuevos
     return data
-
+# genera el grafico de tipo mapa de calor
 def my_plot(df, start, end, col):
     df = df[(df['Fecha'] >= str(start)) & (df['Fecha'] <= str(end))]
 
@@ -37,7 +37,7 @@ def my_plot(df, start, end, col):
         height=550
     )
     return fig
-
+# se carga los datos del ine y se segregan por edades
 def get_column_ine(df):
     data = pd.read_csv('https://raw.githubusercontent.com/joaquin-silva/covid-19-chile/master/data/datos_ine_proyecciones.csv',sep=';')
     data = data[['Edad','2020']]
@@ -101,7 +101,7 @@ def get_column_ine(df):
 
     df['Incidencia'] = incidencia
     return df
-
+#metodo principal
 def main():
     st.title('Casos confirmados por grupo etario')
     st.markdown('''
