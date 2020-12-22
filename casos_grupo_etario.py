@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 import plotly.express as px
 import datetime
 # carga los datos
-def get_data():
+def cargar_datos():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto16/CasosGeneroEtario_std.csv')
     data = df.groupby(['Fecha','Grupo de edad'], as_index=False).sum()
     data = data.sort_values(['Fecha','Grupo de edad'], ascending=True).reset_index(drop=True)
@@ -19,7 +19,7 @@ def get_data():
     data['Casos nuevos'] = nuevos
     return data
 # genera el grafico de tipo mapa de calor
-def my_plot(df, start, end, col):
+def graficoTermico(df, start, end, col):
     df = df[(df['Fecha'] >= str(start)) & (df['Fecha'] <= str(end))]
 
     fig = go.Figure(data=go.Heatmap(
@@ -38,7 +38,7 @@ def my_plot(df, start, end, col):
     )
     return fig
 # se carga los datos del ine y se segregan por edades
-def get_column_ine(df):
+def datosINE(df):
     data = pd.read_csv('https://raw.githubusercontent.com/joaquin-silva/covid-19-chile/master/data/datos_ine_proyecciones.csv',sep=';')
     data = data[['Edad','2020']]
     data['2020'] = [int(1000*x) for x in data['2020']]
@@ -109,7 +109,7 @@ def main():
     - Fuente: Ministerio de Ciencia - [Producto 16](https://github.com/MinCiencia/Datos-COVID19/tree/master/output/producto16).
     ''')
 
-    df = get_data()
+    df = cargar_datos()
     st.sidebar.markdown('---')
     start = st.sidebar.date_input('Fecha de inicio', value=df['Fecha'].loc[17])
     end = st.sidebar.date_input('Fecha de término', value=df['Fecha'].loc[df.shape[0]-1])
@@ -118,13 +118,13 @@ def main():
         st.sidebar.error('Error: La fecha de término debe ser después de la fecha de inicio.')
 
     else:
-        fig = my_plot(df, start, end, 'Casos nuevos')
+        fig = graficoTermico(df, start, end, 'Casos nuevos')
         st.plotly_chart(fig, use_container_width=True)
 
         st.header('Incidencia por grupo etario')
-        df = get_column_ine(df) 
+        df = datosINE(df) 
 
-        fig = my_plot(df, start, end, 'Incidencia')
+        fig = graficoTermico(df, start, end, 'Incidencia')
         st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":

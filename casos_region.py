@@ -9,7 +9,7 @@ import plotly.express as px
 
 @st.cache
 #carga los datos y los segrega por region y fecha
-def get_data():
+def cargar_datos():
 	URL = "https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto3/CasosTotalesCumulativo_T.csv"
 	df = pd.read_csv(URL)
 	df = df.rename(columns={"Region": "fecha"})
@@ -20,7 +20,7 @@ def get_data():
 
 @st.cache
 #carga los datos y los segrega por region y poblacion
-def get_population():
+def cargar_poblacion():
     URL = "https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto7/PCR.csv"
     df = pd.read_csv(URL)
     df = df[["Region", "Poblacion"]]
@@ -28,7 +28,7 @@ def get_population():
     return df
 
 #retorna la grafica 
-def my_plotly_plot(df, value_name, title, option="Normal"):
+def graficaRegional(df, value_name, title, option="Normal"):
 	df = df.reset_index()
 	df = pd.melt(df, id_vars=["fecha"], var_name="Región" , value_name=value_name)
 
@@ -50,7 +50,7 @@ def my_plotly_plot(df, value_name, title, option="Normal"):
 def main():
 	st.sidebar.markdown('---')
 
-	df = get_data()
+	df = cargar_datos()
 	options = list(df.columns) + ["Todas las regiones"]
 	region = st.sidebar.multiselect(
 		"Elegir regiones", options, ["Atacama", "Ñuble", "Magallanes"]
@@ -76,7 +76,7 @@ def main():
 		df = df.sort_index()
 		df = df.diff()
 	elif plot == "Total de casos confirmados acumulados por 100.000 habitantes":
-		pop = get_population()
+		pop = cargar_poblacion()
 		df = df.T
 		pop = pop.reset_index().append({"Region": "Total", "Poblacion": pop["Poblacion"].sum()}, ignore_index=True)
 		pop = pop.set_index("Region")
@@ -89,7 +89,7 @@ def main():
 		df = df.T
 		df = df.sort_index()
 		df = df.diff()
-		pop = get_population()
+		pop = cargar_poblacion()
 		df = df.T
 		pop = pop.reset_index().append({"Region": "Total", "Poblacion": pop["Poblacion"].sum()}, ignore_index=True)
 		pop = pop.set_index("Region")
@@ -126,7 +126,7 @@ def main():
 	else:
 		title = "Nuevos casos confirmados por 100.000 habitantes*"
 
-	fig = my_plotly_plot(df, "casos confirmados", title)
+	fig = graficaRegional(df, "casos confirmados", title)
 	st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":

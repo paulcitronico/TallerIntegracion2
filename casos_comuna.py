@@ -7,7 +7,7 @@ import datetime
 
 @st.cache
 #carga los datos por comuna
-def get_data():
+def cargar_datos():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto45/CasosConfirmadosPorComuna_std.csv')
     df['Numero Semana'] = [int(semana.split('SE')[1]) for semana in df['Semana Epidemiologica']]
     df['Casos 100 mil'] = 100000*df['Casos confirmados']/df['Poblacion']
@@ -15,14 +15,14 @@ def get_data():
 
 @st.cache
 #carga los datos de inicio de los sintomas
-def get_data_inicio_sintomas():
+def carga_datos_comienzo_sintomas():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto15/FechaInicioSintomas_std.csv')
     df['Numero Semana'] = [int(semana.split('SE')[1]) for semana in df['Semana Epidemiologica']]
     df['Casos 100 mil'] = 100000*df['Casos confirmados']/df['Poblacion']
     return df
 
 #metodo que retorna los casos por comuna
-def my_plot(df, comunas, op, op_data, op_plot):
+def graficoxComuna(df, comunas, op, op_data, op_plot):
     fig = go.Figure()
     for i, comuna in enumerate(comunas):
         aux = df[df['Comuna']==comuna]
@@ -44,7 +44,7 @@ def my_plot(df, comunas, op, op_data, op_plot):
     )
     return fig
 # metodo que genera un mapa de calor 
-def my_heatmap(df, comunas, op, op_data):
+def graficoTermico(df, comunas, op, op_data):
     data = df[df['Comuna'].isin(comunas)]
     if op:
         z = data['Casos 100 mil']
@@ -68,6 +68,7 @@ def my_heatmap(df, comunas, op, op_data):
 
     return fig
 
+#metodo principal
 def main():
     st.title('Casos por comuna')
     
@@ -76,9 +77,9 @@ def main():
     op_data = st.sidebar.selectbox('Datos', ['Casos confirmados','Casos nuevos por fecha de inicio de síntomas'], key=0)
     
     if op_data == 'Casos confirmados':
-        df = get_data()
+        df = cargar_datos()
     if op_data == 'Casos nuevos por fecha de inicio de síntomas':
-        df = get_data_inicio_sintomas()
+        df = carga_datos_comienzo_sintomas()
 
     op_plot = st.sidebar.selectbox('Tipo gráfico', ['Lineas','Barras','Heatmap'])
     op = st.sidebar.checkbox('Ver casos por 100.000 habitantes', value=False, key=0)
@@ -88,12 +89,12 @@ def main():
 
     if op_plot != 'Heatmap':
         try:
-            fig = my_plot(df, select, op, op_data, op_plot)
+            fig = graficoxComuna(df, select, op, op_data, op_plot)
             st.plotly_chart(fig, use_container_width=True) 
         except:
             st.write('Demasiadas comunas seleccionadas')
     else:
-        fig = my_heatmap(df, select, op, op_data)
+        fig = graficoTermico(df, select, op, op_data)
         st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":

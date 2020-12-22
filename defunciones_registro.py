@@ -8,7 +8,7 @@ import datetime
 @st.cache
 
 #Extrae los datos
-def get_data():
+def cargar_datos():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto32/Defunciones_std.csv')
     df["Año"] = [df["Fecha"][i].split("-")[0] for i in range(df.shape[0])]
     df["Mes"] = [df["Fecha"][i].split("-")[1] for i in range(df.shape[0])]
@@ -79,7 +79,7 @@ def main():
 
     st.header('Datos')
     st.write('Cantidad de defunciones inscritas en el Registro Civil por número de semana.')
-    df = get_data()
+    df = cargar_datos()
     show_df = st.checkbox('Mostrar datos')
     if show_df:
         st.write(df.sort_values(by="Año"))

@@ -7,18 +7,18 @@ import datetime
 
 @st.cache
 #Extraer datos de comuna
-def get_data_comuna():
+def cargar_datos_comuna():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto55/Positividad_por_comuna.csv')
     return df
 
 @st.cache
 #Extraer datos de region
-def get_data_reg():
+def cagar_datos_regional():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto55/Positividad_por_region.csv')
     return df
 
 #Crea el grafico de comuna
-def my_plot(df, comunas, op):
+def grafica_Comunal(df, comunas, op):
     fig = go.Figure()
     for i, comuna in enumerate(comunas):
         aux = df[df['Comuna']==comuna]
@@ -45,7 +45,7 @@ def my_plot(df, comunas, op):
     return fig
 
 #Crea el grafico de region
-def my_plot_reg(df, regiones, op):
+def grafica_regional(df, regiones, op):
     fig = go.Figure()
     for i, region in enumerate(regiones):
         aux = df[df['Region']==region]
@@ -81,18 +81,18 @@ def main():
 
     st.header('Vista regional')
     
-    df = get_data_reg()
+    df = cagar_datos_regional()
     l_reg = list(set(df['Region']))
     l_reg = [x for x in l_reg if str(x)!='nan']   
     regiones = st.multiselect('Regiones', l_reg, ['Antofagasta','Coquimbo','Metropolitana','Magallanes'], key=0)
 
     op = st.checkbox("Suavizar datos (Promedio móvil 7 días)", value=True, key=0)
-    fig = my_plot_reg(df, regiones, op)
+    fig = grafica_regional(df, regiones, op)
     st.plotly_chart(fig, use_container_width=True) 
 
     st.header('Vista comunal')
 
-    df = get_data_comuna()
+    df = cargar_datos_comuna()
     regiones = list(set(df['Region']))
     reg = st.selectbox('Region', regiones, index=regiones.index('Metropolitana'))
     df_reg = df[df['Region']==reg].reset_index(drop=True)
@@ -107,7 +107,7 @@ def main():
 
     op = st.checkbox("Suavizar datos (Promedio móvil 7 días)", value=True, key=1)
     try:
-        fig = my_plot(df, comunas, op)
+        fig = grafica_Comunal(df, comunas, op)
         st.plotly_chart(fig, use_container_width=True) 
     except:
         st.write('Demasiadas comunas seleccionadas')

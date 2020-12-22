@@ -6,7 +6,7 @@ import plotly.express as px
 import datetime
 
 @st.cache
-def get_data(): #Funcion para obtener los datos
+def cargar_datos(): #Funcion para obtener los datos
     url = "https://raw.githubusercontent.com/joaquin-silva/covid-19-chile/master/data/new_data_deis_2020.csv" #Se guarda el link de los datos en una variable
     data_2020_raw = pd.read_csv(url) #Metodo para leer archivos .csv como el de "url" y esto se guarda en una variable
     data_2020_raw["fecha"] = pd.to_datetime(data_2020_raw["fecha"]) #Metodo para obtener el datetime de la variable "data_2020_raw" dn la columna "fecha"
@@ -16,7 +16,7 @@ def get_data(): #Funcion para obtener los datos
     return data_2020_raw #Devuelve la variable "data..."
 
 #Extrae los datos de muertes
-def get_deaths(data_2020_raw, region, mes): #Funcion para
+def carga_muertitos(data_2020_raw, region, mes): #Funcion para
     data_2020_raw = data_2020_raw.dropna() #Elimina las filas donde falta almenos un elemento en los datos
     age_groups = ['< 1','1 a 4','5 a 9','10 a 14','15 a 19','20 a 24','25 a 29','30 a 34','35 a 39','40 a 44','45 a 49','50 a 54','55 a 59','60 a 64','65 a 69','70 a 74','75 a 79','80 a 84','85 a 89','90 a 99','100 +']#Variable que contiene una lista de los grupos de edades a considerar
     
@@ -35,7 +35,7 @@ def get_deaths(data_2020_raw, region, mes): #Funcion para
     return deaths_percentage
 
 #Crea el grafico de region
-def my_plot(df, region, colors):
+def graficaxRegion(df, region, colors):
     df = df.drop(['Total'])
     fig = go.Figure()
     for i, col in enumerate(df.columns):
@@ -59,7 +59,7 @@ def my_plot(df, region, colors):
     return fig
 
 #Crea el grafico de defunciones confirmado mas sospechoso, genero y edad
-def deaths_genre_plot(df):
+def graficoxMuertes(df):
     df = df[df['causa']=='COVID-19']
     grouped = df.groupby(["género","grupo_edad"])
     l_genero = []
@@ -109,7 +109,7 @@ def deaths_genre_plot(df):
 
 @st.cache
 #Agrupar por causa
-def my_groupby(data):
+def agrupaxCausa(data):
     df = data.groupby(['fecha','región','causa'], as_index=False).count()
     df = df[df.columns[:4]]
     df = df.rename(columns={'año':'cantidad'})
@@ -118,7 +118,7 @@ def my_groupby(data):
     return df
 
 #Crear grafico de defunciones por causa basica
-def my_plot_2(df, op, colors):
+def grafica_muertes_basicas(df, op, colors):
     df = df.sort_values(by=['causa']).reset_index(drop=True)
     fig = go.Figure()
     causas = list(set(df['causa']))
@@ -147,7 +147,7 @@ def my_plot_2(df, op, colors):
 
 @st.cache
 #Agrupar por region y causa_detalle
-def my_groupby_2(data):
+def agrupaxRegionyCausa(data):
     df = data.groupby(['fecha','región','causa_detalle'], as_index=False).count()
     df = df[df.columns[:4]]
     df = df.rename(columns={'año':'cantidad'})
@@ -156,7 +156,7 @@ def my_groupby_2(data):
 
 @st.cache
 #Agrupar por causa_detalle
-def my_groupby_3(data):
+def agrupaxDetalle(data):
     df = data.groupby(['fecha','causa_detalle'], as_index=False).count()
     df = df[df.columns[:3]]
     df = df.rename(columns={'año':'cantidad'})
@@ -164,7 +164,7 @@ def my_groupby_3(data):
     return df
 
 #Crear grafico de defunciones confirmado y sospechoso
-def my_plot_3(df):
+def graficaxMueteySospecha(df):
     colors = ['#d62728','#1f77b4']
     fig = go.Figure()
     causas = list(set(df['causa_detalle']))
@@ -200,7 +200,7 @@ def my_plot_3(df):
 
 @st.cache
 #Agrupar por comuna, mes y nombre_mes
-def my_groupby_4(df):
+def agrupaxComunaMesyNombremes(df):
     data = df.groupby(['región','comuna','mes','nombre_mes'], as_index=False).count()
     data =data[data.columns[:5]]
     data = data.rename(columns={'año':'cantidad'})
@@ -208,7 +208,7 @@ def my_groupby_4(df):
     return data
 
 #Crear grafico de defunciones confirmado mas sospechoso
-def my_plot_4(df):
+def graficaMuertesySospechosos(df):
     fig = go.Figure(data=go.Heatmap(
         z=df['cantidad'],
         x=df['nombre_mes'],
@@ -227,7 +227,7 @@ def my_plot_4(df):
     return fig
 
 #Crear grafico de defunciones por region por causa basica
-def my_plot_5(df, meses, region):
+def graficaRegionalCausaBasica(df, meses, region):
     df = df[df['mes'].isin(meses)]
     data = df.groupby('causa',as_index=False).count()
     data = data.rename(columns={"año": "cantidad"})
@@ -250,7 +250,7 @@ def my_plot_5(df, meses, region):
     return fig
 
 #Crear grafico de porcentaje de defunciones por comuna
-def my_plot_6(df, meses, region, colors):
+def graficoMuertesxComuna(df, meses, region, colors):
     df = df[df['mes'].isin(meses)]
     data = df.groupby(['comuna','causa'],as_index=False).count()
     data = data.rename(columns={"año": "cantidad"})
@@ -295,7 +295,7 @@ def my_plot_6(df, meses, region, colors):
 
 #Clase principal
 def main():
-    df = get_data()
+    df = cargar_datos()
     df_covid = df[df["causa"]=='COVID-19'].reset_index(drop=True)
 
     flatui = ['#d62728','#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5']
@@ -309,15 +309,15 @@ def main():
     st.title('Defunciones Covid-19 por fecha')
 
     st.header('Gráfico Nacional')
-    group = my_groupby_3(df_covid)
-    fig = my_plot_3(group)
+    group = agrupaxDetalle(df_covid)
+    fig = graficaxMueteySospecha(group)
     st.plotly_chart(fig, use_container_width=True)
 
     st.header(f'Gráfico Región {reg}')
-    group = my_groupby_2(df_covid)
+    group = agrupaxRegionyCausa(df_covid)
     df_reg_covid = group[group['región']==reg]
 
-    fig = my_plot_3(df_reg_covid)
+    fig = graficaxMueteySospecha(df_reg_covid)
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown('---')
@@ -330,17 +330,17 @@ def main():
     if st.checkbox('Mostrar lista de causas básicas'):
         st.table(pd.DataFrame(list(set(df_reg['causa'])),columns=['Causa básica']))
 
-    fig = my_plot_5(df_reg, num_meses, reg)
+    fig = graficaRegionalCausaBasica(df_reg, num_meses, reg)
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown('---')
 
-    fig = my_plot_6(df_reg, num_meses, reg, flatui)
+    fig = graficoMuertesxComuna(df_reg, num_meses, reg, flatui)
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown('---')
-    deaths_percentage = get_deaths(df_reg, reg, num_meses)
-    fig = my_plot(deaths_percentage, reg, flatui)
+    deaths_percentage = carga_muertitos(df_reg, reg, num_meses)
+    fig = graficaxRegion(deaths_percentage, reg, flatui)
     st.plotly_chart(fig, use_container_width=True) 
 
     if st.checkbox("Mostrar datos", value=False, key=0): 
@@ -349,23 +349,23 @@ def main():
     st.markdown('---')
     st.title('Defunciones por género y grupo etario')
     st.header('Gráfico Nacional')
-    fig = deaths_genre_plot(df)
+    fig = graficoxMuertes(df)
     st.plotly_chart(fig, use_container_width=True)
 
     st.header(f'Gráfico Región {reg}')
 
-    fig = deaths_genre_plot(df_reg)
+    fig = graficoxMuertes(df_reg)
     st.plotly_chart(fig, use_container_width=True)
 
     st.markdown('---')
     st.title('Defunciones por causa básica')
 
     st.header(f'Gráfico Región {reg}')
-    group = my_groupby(df)
+    group = agrupaxCausa(df)
     df_reg = group[group['región']==reg]
 
     op = st.checkbox("Suavizar datos (Promedio móvil 7 días)", value=True)
-    fig = my_plot_2(df_reg, op, flatui)
+    fig = grafica_muertes_basicas(df_reg, op, flatui)
     st.plotly_chart(fig, use_container_width=True)
 
     if st.checkbox("Mostrar datos", value=False, key=1): 
@@ -375,8 +375,8 @@ def main():
     st.title(f'Defunciones Región {reg} por comuna')
 
     df_reg_covid = df_covid[df_covid['región']==reg]
-    group = my_groupby_4(df_reg_covid)
-    fig = my_plot_4(group)
+    group = agrupaxComunaMesyNombremes(df_reg_covid)
+    fig = graficaMuertesySospechosos(group)
     st.plotly_chart(fig, use_container_width=True)
 
 if __name__ == "__main__":
