@@ -58,7 +58,7 @@ def my_plot(df, region, colors):
     )
     return fig
 
-#Crea el grafico de muertes
+#Crea el grafico de defunciones confirmado mas sospechoso, genero y edad
 def deaths_genre_plot(df):
     df = df[df['causa']=='COVID-19']
     grouped = df.groupby(["género","grupo_edad"])
