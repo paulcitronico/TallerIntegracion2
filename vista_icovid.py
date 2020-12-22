@@ -6,15 +6,18 @@ import plotly.express as px
 import datetime
 
 @st.cache
+#Extraer datos de comuna
 def get_data_comuna():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto55/Positividad_por_comuna.csv')
     return df
 
 @st.cache
+#Extraer datos de region
 def get_data_reg():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto55/Positividad_por_region.csv')
     return df
 
+#Crea el grafico de comuna
 def my_plot(df, comunas, op):
     fig = go.Figure()
     for i, comuna in enumerate(comunas):
@@ -41,6 +44,7 @@ def my_plot(df, comunas, op):
     )
     return fig
 
+#Crea el grafico de region
 def my_plot_reg(df, regiones, op):
     fig = go.Figure()
     for i, region in enumerate(regiones):
@@ -66,6 +70,7 @@ def my_plot_reg(df, regiones, op):
     )
     return fig
 
+#Clase principal
 def main():
     st.title('Positividad ICOVID Chile')
 

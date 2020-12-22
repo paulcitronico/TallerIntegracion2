@@ -6,6 +6,8 @@ import plotly.express as px
 import datetime
 
 @st.cache
+
+#Extrae los datos
 def get_data():
     df = pd.read_csv('https://raw.githubusercontent.com/MinCiencia/Datos-COVID19/master/output/producto32/Defunciones_std.csv')
     df["Año"] = [df["Fecha"][i].split("-")[0] for i in range(df.shape[0])]
@@ -19,6 +21,7 @@ def get_data():
     data = data.drop(columns=['Codigo region','Codigo comuna'])
     return data
 
+#Crea el grafico a nivel nacional
 def grafico_nacional(dfs):
     fig = go.Figure()
     colors = ["seagreen","teal","deepskyblue","gray","red"]
@@ -45,6 +48,7 @@ def grafico_nacional(dfs):
         height=550)
     return fig
 
+#Crea el grafico de region
 def grafica_region(dfs, region):
     dfs = dfs[dfs['Region']==region]
     fig = go.Figure()
@@ -69,6 +73,7 @@ def grafica_region(dfs, region):
         height=550)
     return fig
 
+#Clase principal
 def main():
     st.title("Defunciones inscritas Registro Civil")
 

@@ -6,25 +6,26 @@ import plotly.express as px
 import datetime
 
 @st.cache
-def get_data():
-    url = "https://raw.githubusercontent.com/joaquin-silva/covid-19-chile/master/data/new_data_deis_2020.csv"
-    data_2020_raw = pd.read_csv(url)
-    data_2020_raw["fecha"] = pd.to_datetime(data_2020_raw["fecha"])
-    data_2020_raw["mes"] = data_2020_raw["fecha"].dt.month
-    sent_to = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"}
-    data_2020_raw["nombre_mes"] = data_2020_raw['mes'].map(sent_to)
-    return data_2020_raw
+def get_data(): #Funcion para obtener los datos
+    url = "https://raw.githubusercontent.com/joaquin-silva/covid-19-chile/master/data/new_data_deis_2020.csv" #Se guarda el link de los datos en una variable
+    data_2020_raw = pd.read_csv(url) #Metodo para leer archivos .csv como el de "url" y esto se guarda en una variable
+    data_2020_raw["fecha"] = pd.to_datetime(data_2020_raw["fecha"]) #Metodo para obtener el datetime de la variable "data_2020_raw" dn la columna "fecha"
+    data_2020_raw["mes"] = data_2020_raw["fecha"].dt.month #Metodo para obtener el "month"(mes) del datetime de la variable "date_2020_raw" dn la columna "mes" 
+    sent_to = {1:"Enero",2:"Febrero",3:"Marzo",4:"Abril",5:"Mayo",6:"Junio",7:"Julio",8:"Agosto",9:"Septiembre",10:"Octubre",11:"Noviembre",12:"Diciembre"} #Crea variable con un diccionario que tiene todos los meses del año
+    data_2020_raw["nombre_mes"] = data_2020_raw['mes'].map(sent_to) #Hacer mapeo de los meses poniendo la variable "sent_to" con los nombres 
+    return data_2020_raw #Devuelve la variable "data..."
 
-def get_deaths(data_2020_raw, region, mes):
-    data_2020_raw = data_2020_raw.dropna()
-    age_groups = ['< 1','1 a 4','5 a 9','10 a 14','15 a 19','20 a 24','25 a 29','30 a 34','35 a 39','40 a 44','45 a 49','50 a 54','55 a 59','60 a 64','65 a 69','70 a 74','75 a 79','80 a 84','85 a 89','90 a 99','100 +']
+#Extrae los datos de muertes
+def get_deaths(data_2020_raw, region, mes): #Funcion para
+    data_2020_raw = data_2020_raw.dropna() #Elimina las filas donde falta almenos un elemento en los datos
+    age_groups = ['< 1','1 a 4','5 a 9','10 a 14','15 a 19','20 a 24','25 a 29','30 a 34','35 a 39','40 a 44','45 a 49','50 a 54','55 a 59','60 a 64','65 a 69','70 a 74','75 a 79','80 a 84','85 a 89','90 a 99','100 +']#Variable que contiene una lista de los grupos de edades a considerar
     
-    deaths = pd.DataFrame()
-    deaths['edades'] = age_groups + ['Total']
-    for causa in data_2020_raw['causa'].unique():
+    deaths = pd.DataFrame() #Crea variable para las muertes tipo "DataFrame"
+    deaths['edades'] = age_groups + ['Total']#En la columna "edades" en la variable "deaths" se le asignarán los grupos de edades con un elemento mas que será el "Total"
+    for causa in data_2020_raw['causa'].unique(): #Recorre el data tomando valores unicos de la columna "causa"
         deaths[causa] = [len(data_2020_raw[data_2020_raw["mes"].isin(mes)].query(f'región == "{region}" & grupo_edad == "{edades}" & causa == "{causa}"')) for edades in age_groups] + [len(data_2020_raw[data_2020_raw["mes"].isin(mes)].query(f'región == "{region}" & causa == "{causa}"'))]
     deaths = deaths.set_index('edades')
-
+    
     deaths_percentage = deaths.apply(lambda x: 100*x/deaths.sum(axis=1))
     lista = list(deaths_percentage.loc["Total"].sort_values(ascending=False).index)
     deaths_percentage = deaths_percentage[lista]
@@ -33,6 +34,7 @@ def get_deaths(data_2020_raw, region, mes):
     deaths_percentage.columns = [causa[:37] for causa in deaths_percentage.columns]
     return deaths_percentage
 
+#Crea el grafico de region
 def my_plot(df, region, colors):
     df = df.drop(['Total'])
     fig = go.Figure()
@@ -56,6 +58,7 @@ def my_plot(df, region, colors):
     )
     return fig
 
+#Crea el grafico de muertes
 def deaths_genre_plot(df):
     df = df[df['causa']=='COVID-19']
     grouped = df.groupby(["género","grupo_edad"])
